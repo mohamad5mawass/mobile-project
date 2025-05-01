@@ -12,16 +12,13 @@ class FoodInfoPage extends StatefulWidget {
     required this.foodItem,
     required this.restaurantId,
   }) : super(key: key);
-
   @override
   _FoodInfoPageState createState() => _FoodInfoPageState();
 }
-
 class _FoodInfoPageState extends State<FoodInfoPage> {
   final TextEditingController _commentController = TextEditingController();
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final FirebaseAuth _auth = FirebaseAuth.instance;
-
   String? _whatsappNumber;
   bool _isOrdered = false;
   bool _isLoading = false;
@@ -95,22 +92,19 @@ class _FoodInfoPageState extends State<FoodInfoPage> {
     }
   }
 
-  void _incrementQuantity() {
+  vgit add .oid _incrementQuantity() {
     setState(() {
       if (_quantity < _maxQuantity) _quantity++;
     });
   }
-
   void _decrementQuantity() {
     setState(() {
       if (_quantity > 1) _quantity--;
     });
   }
-
   Future<void> _placeOrder() async {
     await _showCommentDialog();
   }
-
   Future<void> _showCommentDialog() async {
     return showDialog<void>(
       context: context,
@@ -150,19 +144,16 @@ class _FoodInfoPageState extends State<FoodInfoPage> {
       },
     );
   }
-
   Future<void> _submitOrder() async {
     setState(() {
       _isLoading = true;
     });
-
     try {
       final User? currentUser = _auth.currentUser;
       if (currentUser == null) {
         _showLoginRequiredDialog();
         return;
       }
-
       double totalPrice = (widget.foodItem['price'] ?? 0.0) * _quantity;
       double commission = totalPrice * 0.05;
 
@@ -171,13 +162,11 @@ class _FoodInfoPageState extends State<FoodInfoPage> {
           .doc(widget.restaurantId)
           .collection('orders')
           .doc();
-
       DocumentReference userOrderRef = _firestore
           .collection('users')
           .doc(currentUser.uid)
           .collection('orders')
           .doc();
-
       Map<String, dynamic> orderData = {
         'userOrderId': userOrderRef.id,
         'restaurantOrderId': restaurantOrderRef.id,
@@ -200,16 +189,12 @@ class _FoodInfoPageState extends State<FoodInfoPage> {
         'commission': commission,
         'imageUrl': widget.foodItem['imageUrl'] ?? '',
       };
-
       await restaurantOrderRef.set(orderData);
       await userOrderRef.set(orderData);
-
       DocumentReference ownerRef =
       _firestore.collection('owners').doc("eY3B3EvHvxa1BcKLwEZ79BPDQVG2");
-
       await _firestore.runTransaction((transaction) async {
         DocumentSnapshot ownerSnapshot = await transaction.get(ownerRef);
-
         if (!ownerSnapshot.exists) {
           transaction.set(ownerRef, {
             'totalProfit': commission,
@@ -220,7 +205,6 @@ class _FoodInfoPageState extends State<FoodInfoPage> {
           double currentProfit =
               (ownerSnapshot.data() as Map<String, dynamic>)['totalProfit'] ??
                   0.0;
-
           transaction.update(ownerRef, {
             'totalProfit': currentProfit + commission,
             'lastCommissionUpdate': FieldValue.serverTimestamp(),
@@ -228,12 +212,10 @@ class _FoodInfoPageState extends State<FoodInfoPage> {
           });
         }
       });
-
       setState(() {
         _isOrdered = true;
         _isLoading = false;
       });
-
       _showSuccessSnackBar('Order placed successfully! 5% commission applied.');
     } catch (e) {
       _showErrorSnackBar('An unexpected error occurred');
@@ -243,7 +225,6 @@ class _FoodInfoPageState extends State<FoodInfoPage> {
       });
     }
   }
-
   @override
   Widget build(BuildContext context) {
     if (_errorMessage != null) {
@@ -262,7 +243,6 @@ class _FoodInfoPageState extends State<FoodInfoPage> {
         });
       });
     }
-
     return Scaffold(
       body: SingleChildScrollView(
         child: Column(
@@ -289,7 +269,6 @@ class _FoodInfoPageState extends State<FoodInfoPage> {
                       onPressed: () => Navigator.pop(context),
                     ),
                   ),
-
                   Positioned(
                     top: 80,
                     right: 40,
@@ -307,7 +286,6 @@ class _FoodInfoPageState extends State<FoodInfoPage> {
                       ],
                     ),
                   ),
-
                   Positioned(
                     bottom: -30,
                     left: 0,
@@ -323,7 +301,6 @@ class _FoodInfoPageState extends State<FoodInfoPage> {
                       ),
                     ),
                   ),
-
                   Positioned(
                     bottom: -30,
                     right: 20,
@@ -379,7 +356,6 @@ class _FoodInfoPageState extends State<FoodInfoPage> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   SizedBox(height: 20),
-
                   Text(
                     'Materials',
                     style: TextStyle(
@@ -393,7 +369,6 @@ class _FoodInfoPageState extends State<FoodInfoPage> {
                     style: TextStyle(color: Colors.grey[600]),
                   ),
                   SizedBox(height: 20),
-
                   Text(
                     'Instructions',
                     style: TextStyle(
@@ -408,7 +383,6 @@ class _FoodInfoPageState extends State<FoodInfoPage> {
                     style: TextStyle(color: Colors.grey[600]),
                   ),
                   SizedBox(height: 20),
-
                   Text(
                     'Descriptions',
                     style: TextStyle(
@@ -433,7 +407,6 @@ class _FoodInfoPageState extends State<FoodInfoPage> {
                     ],
                   ),
                   SizedBox(height: 20),
-
                   Text(
                     'Quantity',
                     style: TextStyle(
@@ -464,7 +437,6 @@ class _FoodInfoPageState extends State<FoodInfoPage> {
                     ],
                   ),
                   SizedBox(height: 20),
-
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -485,7 +457,6 @@ class _FoodInfoPageState extends State<FoodInfoPage> {
                     ],
                   ),
                   SizedBox(height: 20),
-
                   SizedBox(
                     width: double.infinity,
                     height: 50,
@@ -520,7 +491,6 @@ class _FoodInfoPageState extends State<FoodInfoPage> {
       ),
     );
   }
-
   Widget _buildDescriptionItem({
     required IconData icon,
     required String label,
@@ -541,7 +511,6 @@ class _FoodInfoPageState extends State<FoodInfoPage> {
       ),
     );
   }
-
   Widget _buildQuantityButton({
     required IconData icon,
     required VoidCallback onPressed,
@@ -558,7 +527,6 @@ class _FoodInfoPageState extends State<FoodInfoPage> {
       ),
     );
   }
-
   void _showErrorSnackBar(String message) {
     if (mounted) {
       setState(() {
@@ -566,7 +534,6 @@ class _FoodInfoPageState extends State<FoodInfoPage> {
       });
     }
   }
-
   void _showSuccessSnackBar(String message) {
     if (mounted) {
       setState(() {
@@ -574,7 +541,6 @@ class _FoodInfoPageState extends State<FoodInfoPage> {
       });
     }
   }
-
   void _showLoginRequiredDialog() {
     showDialog(
       context: context,
@@ -605,7 +571,6 @@ class _FoodInfoPageState extends State<FoodInfoPage> {
       _showErrorSnackBar('Could not launch WhatsApp');
     }
   }
-
   @override
   void dispose() {
     _commentController.dispose();
