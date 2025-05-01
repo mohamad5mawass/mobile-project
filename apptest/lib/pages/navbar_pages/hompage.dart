@@ -25,7 +25,7 @@ class HomePage extends StatelessWidget {
         return DateFormat('MMMM d, y').format(dateTime);
       }
 
-      // If it's a string, return as is
+      // If it's a string, return as   it is
       if (expirationDate is String) {
         return expirationDate;
       }
