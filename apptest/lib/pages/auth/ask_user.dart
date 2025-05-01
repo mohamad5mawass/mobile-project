@@ -29,8 +29,8 @@ class AskUserPage extends StatelessWidget {
               // Display Lottie animation
               Lottie.asset(
                 'assets/splash.json', // Animation path
-                width: 250,
-                height: 250,
+                width: 240,
+                height: 240,
                 fit: BoxFit.contain,
               ),
 
@@ -46,7 +46,7 @@ class AskUserPage extends StatelessWidget {
                 ),
               ),
 
-              const SizedBox(height: 20), // Space between title and subtitle
+              const SizedBox(height: 30), // Space between title and subtitle
 
               // Subtitle
               Text(
@@ -61,7 +61,7 @@ class AskUserPage extends StatelessWidget {
 
               // Authentication buttons for different roles
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 30),
+                padding: const EdgeInsets.symmetric(horizontal: 40),
                 child: Column(
                   children: [
                     _buildRoleButton(
@@ -73,7 +73,7 @@ class AskUserPage extends StatelessWidget {
                         // Snack bar for "Owner"
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(
-                            content: Text('🚀 Coming Soon! 🎉'),
+                            content: Text('🚀 Coming Soon  !!!!! 🎉'),
                             duration: Duration(seconds: 2),
                           ),
                         );
@@ -90,7 +90,7 @@ class AskUserPage extends StatelessWidget {
                         // Snack bar for "Restaurant"
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(
-                            content: Text('🚀 Coming Soon! 🎉'),
+                            content: Text('🚀 Coming Soon !!!! 🎉'),
                             duration: Duration(seconds: 2),
                           ),
                         );

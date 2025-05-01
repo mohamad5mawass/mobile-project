@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+git commit -m "Describe your change here"import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart'; // For showing Lottie animations
 import 'package:apptest/pages/auth/ask_user.dart'; // Page to navigate after splash
 
@@ -14,7 +14,7 @@ class SplashScreen extends StatefulWidget {
 class _SplashScreenState extends State<SplashScreen>
     with SingleTickerProviderStateMixin {
 
-  // Controller to manage the animation
+  // Controller to manage w tzabet  the animation
   late AnimationController _controller;
 
   @override
