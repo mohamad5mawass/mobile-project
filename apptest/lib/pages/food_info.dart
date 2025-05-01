@@ -92,7 +92,7 @@ class _FoodInfoPageState extends State<FoodInfoPage> {
     }
   }
 
-  vgit add .oid _incrementQuantity() {
+  void _incrementQuantity() {
     setState(() {
       if (_quantity < _maxQuantity) _quantity++;
     });

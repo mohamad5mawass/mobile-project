@@ -451,42 +451,34 @@ class _LocationPickerPageState extends State<LocationPickerPage> {
       );
       return;
     }
-
     try {
       setState(() {
         _isLoading = true;
       });
-
       // Geocode the entered location
       List<Location> locations =
           await locationFromAddress(_searchController.text);
-
       if (locations.isNotEmpty) {
         Location location = locations.first;
-
         // Update selected location
         setState(() {
           _selectedLocation = LatLng(location.latitude, location.longitude);
         });
-
         // Reverse geocode to get detailed location name
         List<Placemark> placemarks = await placemarkFromCoordinates(
           location.latitude,
           location.longitude,
         );
-
         if (placemarks.isNotEmpty) {
           Placemark place = placemarks[0];
           setState(() {
             _selectedLocationName = _formatPlacemark(place);
           });
         }
-
         // Zoom and center map on the location
         _mapController.move(LatLng(location.latitude, location.longitude),
             12.0 // Closer zoom level
             );
-
         // Clear suggestions
         _searchSuggestions.clear();
       }
@@ -501,28 +493,23 @@ class _LocationPickerPageState extends State<LocationPickerPage> {
       });
     }
   }
-
   void _selectSuggestion(Map<String, dynamic> suggestion) {
     // Update search controller
     _searchController.text = suggestion['displayName'];
-
     // Update selected location
     setState(() {
       _selectedLocation =
           LatLng(suggestion['latitude'], suggestion['longitude']);
       _searchSuggestions.clear();
     });
-
     // Zoom and center map
     _mapController.move(LatLng(suggestion['latitude'], suggestion['longitude']),
         12.0 // Closer zoom level
         );
   }
-
   String _formatPlacemark(Placemark placemark) {
     return '${placemark.street}, ${placemark.locality}, ${placemark.country}';
   }
-
   void _onMapTap(TapPosition tapPosition, LatLng point) async {
     try {
       // Reverse geocode the selected location
@@ -530,7 +517,6 @@ class _LocationPickerPageState extends State<LocationPickerPage> {
         point.latitude,
         point.longitude,
       );
-
       if (placemarks.isNotEmpty) {
         Placemark place = placemarks[0];
         setState(() {
@@ -545,7 +531,6 @@ class _LocationPickerPageState extends State<LocationPickerPage> {
       });
     }
   }
-
   void _saveLocation() {
     if (_selectedLocation == null) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -553,7 +538,6 @@ class _LocationPickerPageState extends State<LocationPickerPage> {
       );
       return;
     }
-
     // Convert location to a string representation with name
     String locationString =
         '${_selectedLocation!.latitude},${_selectedLocation!.longitude}|${_selectedLocationName ?? ''}';
