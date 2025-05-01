@@ -122,7 +122,6 @@ class AskUserPage extends StatelessWidget {
       ),
     );
   }
-
   // Helper method to build each role button
   Widget _buildRoleButton(
       BuildContext context,

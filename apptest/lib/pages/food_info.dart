@@ -42,58 +42,32 @@ class _FoodInfoPageState extends State<FoodInfoPage> {
   }
 
   Future<void> _fetchRestaurantDetails() async {
-    print('Fetching restaurant details');
-    print('Current Restaurant ID: ${widget.restaurantId}');
-
     try {
       if (widget.restaurantId.isEmpty) {
-        print('❌ ERROR: Restaurant ID is empty');
-        print('Full widget details: ${widget.toString()}');
         _showErrorSnackBar('Invalid restaurant information');
         return;
       }
-
-      print('Attempting to fetch restaurant document');
-      final QuerySnapshot restaurantQuery =
-      await _firestore.collection('restaurants').get();
-
-      print('Total restaurants found: ${restaurantQuery.docs.length}');
-      restaurantQuery.docs.forEach((doc) {
-        print('Found Restaurant ID: ${doc.id}');
-      });
 
       final restaurantDoc = await _firestore
           .collection('restaurants')
           .doc(widget.restaurantId)
           .get();
 
-      print('Restaurant Document Fetch Attempt:');
-      print('Document exists: ${restaurantDoc.exists}');
-
       if (!restaurantDoc.exists) {
-        print('❌ ERROR: Restaurant document does not exist');
-        print('Attempted ID: ${widget.restaurantId}');
         _showErrorSnackBar('Restaurant not found');
         return;
       }
 
       final data = restaurantDoc.data();
       if (data == null) {
-        print('❌ ERROR: Restaurant document data is null');
         _showErrorSnackBar('Unable to fetch restaurant details');
         return;
       }
 
-      print('Restaurant Data: $data');
-
       setState(() {
         _whatsappNumber = data['whatsappNumber'];
-        print('WhatsApp Number: $_whatsappNumber');
       });
-    } catch (e, stackTrace) {
-      print('❌ CRITICAL ERROR in _fetchRestaurantDetails');
-      print('Error: $e');
-      print('Stack Trace: $stackTrace');
+    } catch (e) {
       _showErrorSnackBar('Could not fetch restaurant details');
     }
   }
@@ -112,7 +86,6 @@ class _FoodInfoPageState extends State<FoodInfoPage> {
         setState(() {
           _selectedMaterials = List<String>.from(data['materials'] ?? []);
           _instructions = data['instructions'] ?? '';
-          // Prioritize Firestore data, fallback to widget foodItem
           _maxQuantity =
               data['maxQuantity'] ?? widget.foodItem['quantity'] ?? 10;
         });
@@ -190,28 +163,24 @@ class _FoodInfoPageState extends State<FoodInfoPage> {
         return;
       }
 
-      // Calculate total price and commission
       double totalPrice = (widget.foodItem['price'] ?? 0.0) * _quantity;
-      double commission = totalPrice * 0.05; // 5% commission
+      double commission = totalPrice * 0.05;
 
-      // Create order document reference for restaurant
       DocumentReference restaurantOrderRef = _firestore
           .collection('restaurants')
           .doc(widget.restaurantId)
           .collection('orders')
           .doc();
 
-      // Create order document reference for user
       DocumentReference userOrderRef = _firestore
           .collection('users')
           .doc(currentUser.uid)
           .collection('orders')
           .doc();
 
-      // Prepare order data with quantity and materials
       Map<String, dynamic> orderData = {
-        'userOrderId': userOrderRef.id, // Add userOrderId
-        'restaurantOrderId': restaurantOrderRef.id, // Add restaurantOrderId
+        'userOrderId': userOrderRef.id,
+        'restaurantOrderId': restaurantOrderRef.id,
         'userId': currentUser.uid,
         'userName': currentUser.displayName ?? 'Anonymous User',
         'userEmail': currentUser.email ?? 'No email',
@@ -232,13 +201,9 @@ class _FoodInfoPageState extends State<FoodInfoPage> {
         'imageUrl': widget.foodItem['imageUrl'] ?? '',
       };
 
-      // Submit order to restaurant's orders subcollection
       await restaurantOrderRef.set(orderData);
-
-      // Submit order to user's orders subcollection
       await userOrderRef.set(orderData);
 
-      // Update owner's profit using current user's UID
       DocumentReference ownerRef =
       _firestore.collection('owners').doc("eY3B3EvHvxa1BcKLwEZ79BPDQVG2");
 
@@ -246,19 +211,16 @@ class _FoodInfoPageState extends State<FoodInfoPage> {
         DocumentSnapshot ownerSnapshot = await transaction.get(ownerRef);
 
         if (!ownerSnapshot.exists) {
-          // If owner document doesn't exist, create it
           transaction.set(ownerRef, {
             'totalProfit': commission,
             'lastCommissionUpdate': FieldValue.serverTimestamp(),
             'lastCommissionAmount': commission
           });
         } else {
-          // Get current profit or default to 0
           double currentProfit =
               (ownerSnapshot.data() as Map<String, dynamic>)['totalProfit'] ??
                   0.0;
 
-          // Update total profit by adding commission
           transaction.update(ownerRef, {
             'totalProfit': currentProfit + commission,
             'lastCommissionUpdate': FieldValue.serverTimestamp(),
@@ -267,83 +229,19 @@ class _FoodInfoPageState extends State<FoodInfoPage> {
         }
       });
 
-      // Update UI
       setState(() {
         _isOrdered = true;
         _isLoading = false;
       });
 
-      // Show success message
       _showSuccessSnackBar('Order placed successfully! 5% commission applied.');
-    } catch (e, stackTrace) {
-      print('Unexpected error in order submission: $e');
-      print('Stack trace: $stackTrace');
+    } catch (e) {
       _showErrorSnackBar('An unexpected error occurred');
     } finally {
       setState(() {
         _isLoading = false;
       });
     }
-  }
-
-  Widget _buildQuantitySelector() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        IconButton(
-          icon: Icon(Icons.remove_circle_outline),
-          onPressed: _decrementQuantity,
-        ),
-        Text(
-          '$_quantity / $_maxQuantity',
-          style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-        ),
-        IconButton(
-          icon: Icon(Icons.add_circle_outline),
-          onPressed: _incrementQuantity,
-        ),
-      ],
-    );
-  }
-
-  Widget _buildMaterialsSelector() {
-    return _selectedMaterials.isNotEmpty
-        ? Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          'Materials:',
-          style: TextStyle(fontWeight: FontWeight.bold),
-        ),
-        Wrap(
-          spacing: 8.0,
-          children: _selectedMaterials.map((material) {
-            return Chip(
-              label: Text(material),
-            );
-          }).toList(),
-        ),
-      ],
-    )
-        : SizedBox.shrink();
-  }
-
-  Widget _buildInstructionsSection() {
-    return _instructions != null && _instructions!.isNotEmpty
-        ? Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          'Instructions:',
-          style: TextStyle(fontWeight: FontWeight.bold),
-        ),
-        Text(
-          _instructions!,
-          style: TextStyle(color: Colors.grey[700]),
-        ),
-      ],
-    )
-        : SizedBox.shrink();
   }
 
   @override
@@ -370,12 +268,11 @@ class _FoodInfoPageState extends State<FoodInfoPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Hero Image Section with Pink Background
             Container(
-              height: 300, // Increased height for better layout
+              height: 300,
               width: double.infinity,
               decoration: BoxDecoration(
-                color: Color(0xFFD75A88), // Pink background
+                color: Color(0xFFD75A88),
                 borderRadius: BorderRadius.only(
                   bottomLeft: Radius.circular(30),
                   bottomRight: Radius.circular(30),
@@ -384,7 +281,6 @@ class _FoodInfoPageState extends State<FoodInfoPage> {
               child: Stack(
                 clipBehavior: Clip.none,
                 children: [
-                  // Back Button - Top Left
                   Positioned(
                     top: 50,
                     left: 10,
@@ -394,7 +290,6 @@ class _FoodInfoPageState extends State<FoodInfoPage> {
                     ),
                   ),
 
-                  // Title and Votes - Top Right
                   Positioned(
                     top: 80,
                     right: 40,
@@ -409,28 +304,10 @@ class _FoodInfoPageState extends State<FoodInfoPage> {
                             fontWeight: FontWeight.bold,
                           ),
                         ),
-                        SizedBox(height: 10),
-                        Container(
-                          padding:
-                          EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                          decoration: BoxDecoration(
-                            color: Colors.white.withOpacity(0.3),
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-                          child: Row(
-                            children: [
-                              Icon(Icons.star, color: Colors.amber, size: 20),
-                              Text('125 Votes',
-                                  style: TextStyle(
-                                      fontSize: 12, color: Colors.white)),
-                            ],
-                          ),
-                        ),
                       ],
                     ),
                   ),
 
-                  // Image at Bottom Left (Overlaying)
                   Positioned(
                     bottom: -30,
                     left: 0,
@@ -447,7 +324,6 @@ class _FoodInfoPageState extends State<FoodInfoPage> {
                     ),
                   ),
 
-                  // Price Container at Bottom Right (Overlaying)
                   Positioned(
                     bottom: -30,
                     right: 20,
@@ -502,15 +378,8 @@ class _FoodInfoPageState extends State<FoodInfoPage> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Title and Rating
-
                   SizedBox(height: 20),
 
-                  // Price Section
-
-                  SizedBox(height: 20),
-
-                  // Materials Section
                   Text(
                     'Materials',
                     style: TextStyle(
@@ -525,7 +394,6 @@ class _FoodInfoPageState extends State<FoodInfoPage> {
                   ),
                   SizedBox(height: 20),
 
-                  // Instructions Section
                   Text(
                     'Instructions',
                     style: TextStyle(
@@ -541,7 +409,6 @@ class _FoodInfoPageState extends State<FoodInfoPage> {
                   ),
                   SizedBox(height: 20),
 
-                  // Description Icons
                   Text(
                     'Descriptions',
                     style: TextStyle(
@@ -567,7 +434,6 @@ class _FoodInfoPageState extends State<FoodInfoPage> {
                   ),
                   SizedBox(height: 20),
 
-                  // Quantity Selector
                   Text(
                     'Quantity',
                     style: TextStyle(
@@ -599,7 +465,6 @@ class _FoodInfoPageState extends State<FoodInfoPage> {
                   ),
                   SizedBox(height: 20),
 
-                  // Total
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -621,7 +486,6 @@ class _FoodInfoPageState extends State<FoodInfoPage> {
                   ),
                   SizedBox(height: 20),
 
-                  // Order Button
                   SizedBox(
                     width: double.infinity,
                     height: 50,
@@ -737,9 +601,7 @@ class _FoodInfoPageState extends State<FoodInfoPage> {
 
     try {
       await launchUrl(whatsappUrl);
-    } catch (e, stackTrace) {
-      print('Could not launch WhatsApp: $e');
-      print('Stack trace: $stackTrace');
+    } catch (e) {
       _showErrorSnackBar('Could not launch WhatsApp');
     }
   }
