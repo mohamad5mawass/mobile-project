@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:lottie/lottie.dart';
-import 'package:apptest/pages/auth/ask_user.dart'; // Adjust this import as needed
+import 'package:lottie/lottie.dart'; // For showing Lottie animations
+import 'package:apptest/pages/auth/ask_user.dart'; // Page to navigate after splash
 
+// This is the Splash Screen widget
 class SplashScreen extends StatefulWidget {
   const SplashScreen({Key? key}) : super(key: key);
 
@@ -9,21 +10,24 @@ class SplashScreen extends StatefulWidget {
   _SplashScreenState createState() => _SplashScreenState();
 }
 
+// State class for SplashScreen
 class _SplashScreenState extends State<SplashScreen>
     with SingleTickerProviderStateMixin {
+
+  // Controller to manage the animation
   late AnimationController _controller;
 
   @override
   void initState() {
     super.initState();
 
-    // Initialize animation controller
+    // Initialize animation controller to run for 3 seconds
     _controller = AnimationController(
       vsync: this,
       duration: const Duration(seconds: 3),
     );
 
-    // Navigate to ask user page after animation completes
+    // When the animation finishes, navigate to AskUserPage
     _controller.addStatusListener((status) {
       if (status == AnimationStatus.completed) {
         Navigator.of(context).pushReplacement(
@@ -32,12 +36,13 @@ class _SplashScreenState extends State<SplashScreen>
       }
     });
 
-    // Start the animation
+    // Start running the animation
     _controller.forward();
   }
 
   @override
   void dispose() {
+    // Dispose the controller when screen is removed
     _controller.dispose();
     super.dispose();
   }
@@ -45,29 +50,27 @@ class _SplashScreenState extends State<SplashScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor:
-          Colors.white, // Choose a background color that matches your app theme
+      backgroundColor: Colors.white, // Background color for splash screen
       body: Center(
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.center, // Center content vertically
           children: [
-            // Lottie animation - replace with your specific Lottie JSON file
+            // Show Lottie animation
             Lottie.asset(
-              'assets/splash.json', // Make sure to add this file to your assets
-              controller: _controller,
+              'assets/splash.json', // Path to your animation file in assets
+              controller: _controller, // Use the controller to control animation
               width: 300,
               height: 300,
               fit: BoxFit.contain,
-              repeat: false,
+              repeat: false, // Play the animation only once
             ),
-            const SizedBox(height: 20),
+            const SizedBox(height: 20), // Space between animation and text
             const Text(
-              'Food App', // Replace with your app name
+              'Food App', // App name or any text
               style: TextStyle(
                 fontSize: 24,
                 fontWeight: FontWeight.bold,
-                color:
-                    Colors.deepPurple, // Choose a color that matches your theme
+                color: Colors.deepPurple, // Text color
               ),
             ),
           ],
@@ -76,3 +79,4 @@ class _SplashScreenState extends State<SplashScreen>
     );
   }
 }
+

@@ -1,3 +1,4 @@
+// Import necessary packages
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -7,19 +8,21 @@ import 'package:apptest/pages/navbar_pages/restaurants.dart';
 import 'package:apptest/pages/navbar_pages/order.dart';
 import 'package:apptest/pages/navbar_pages/profile.dart';
 
+// Main screen with bottom navbar
 class NavbarScreen extends StatefulWidget {
   @override
   _HomeScreenState createState() => _HomeScreenState();
 }
 
 class _HomeScreenState extends State<NavbarScreen> {
-  int _currentIndex = 0;
-  String? _userProfileImageUrl;
-  String? _userLocation;
+  int _currentIndex = 0; // Track current tab index
+  String? _userProfileImageUrl; // Store user profile image
+  String? _userLocation; // Store user location
 
-  // Dynamic data from user document
+  // List of active navbar icons
   List<String> _activeIcons = ['home', 'restaurant', 'shopping_cart', 'person'];
 
+  // List of inactive navbar icons
   List<String> _inactiveIcons = [
     'home_outlined',
     'restaurant_outlined',
@@ -27,15 +30,16 @@ class _HomeScreenState extends State<NavbarScreen> {
     'person_outlined'
   ];
 
-  late List<Widget> _pages;
+  late List<Widget> _pages; // Pages for each tab
 
   @override
   void initState() {
     super.initState();
-    _initializePages();
-    _fetchUserData();
+    _initializePages(); // Load pages
+    _fetchUserData(); // Load user data
   }
 
+  // Set the pages for tabs
   void _initializePages() {
     _pages = [
       HomePage(),
@@ -45,31 +49,34 @@ class _HomeScreenState extends State<NavbarScreen> {
     ];
   }
 
+  // Parse location string or map from Firestore
   String _parseLocation(dynamic location) {
     if (location == null) return "Location";
 
-    // Handle both map and string locations
+    // If location is map, get name field. Else convert to string
     String locationString =
-        location is Map ? location['name'] ?? '' : location.toString();
+    location is Map ? location['name'] ?? '' : location.toString();
 
-    // Split location
+    // Split location by comma
     List<String> parts = locationString.split(',');
 
-    // Remove first part if it looks like coordinates
+    // Remove coordinates if exist
     if (parts.isNotEmpty && RegExp(r'^[A-Z0-9+]').hasMatch(parts[0].trim())) {
       parts.removeAt(0);
     }
 
-    // Return remaining parts or default
+    // Return cleaned location string
     return parts.isNotEmpty
         ? parts.map((part) => part.trim()).join(', ')
         : "Location";
   }
 
+  // Fetch user data from Firestore
   Future<void> _fetchUserData() async {
     User? currentUser = FirebaseAuth.instance.currentUser;
     if (currentUser != null) {
       try {
+        // Get user document
         DocumentSnapshot userDoc = await FirebaseFirestore.instance
             .collection('users')
             .doc(currentUser.uid)
@@ -78,29 +85,19 @@ class _HomeScreenState extends State<NavbarScreen> {
         if (mounted) {
           setState(() {
             _userProfileImageUrl = userDoc['profileImageUrl'];
-
-            // Parse location using new method
             _userLocation = _parseLocation(userDoc['location']);
 
-            // Fetch navbar icons from user document
-            _activeIcons = List<String>.from(userDoc['activeIcons'] ??
-                ['home', 'restaurant', 'shopping_cart', 'person']);
+            // Load custom icons if present
+            _activeIcons = List<String>.from(userDoc['activeIcons'] ?? _activeIcons);
+            _inactiveIcons = List<String>.from(userDoc['inactiveIcons'] ?? _inactiveIcons);
 
-            _inactiveIcons = List<String>.from(userDoc['inactiveIcons'] ??
-                [
-                  'home_outlined',
-                  'restaurant_outlined',
-                  'shopping_cart_outlined',
-                  'person_outlined'
-                ]);
-
-            // Ensure current index is within bounds
+            // Make sure index is valid
             _currentIndex = _currentIndex < _pages.length ? _currentIndex : 0;
           });
         }
       } catch (e) {
         print('Error fetching user data: $e');
-        // Fallback to default values
+        // Use defaults on error
         setState(() {
           _activeIcons = ['home', 'restaurant', 'shopping_cart', 'person'];
           _inactiveIcons = [
@@ -114,55 +111,39 @@ class _HomeScreenState extends State<NavbarScreen> {
     }
   }
 
-  // Helper method to convert icon string to IconData
+  // Convert icon name to actual Flutter icon
   IconData _getIconData(String iconName) {
     switch (iconName) {
-      case 'home':
-        return Icons.home;
-      case 'home_outlined':
-        return Icons.home_outlined;
-      case 'restaurant':
-        return Icons.restaurant;
-      case 'restaurant_outlined':
-        return Icons.restaurant_outlined;
-      case 'shopping_cart':
-        return Icons.shopping_cart;
-      case 'shopping_cart_outlined':
-        return Icons.shopping_cart_outlined;
-      case 'person':
-        return Icons.person;
-      case 'person_outlined':
-        return Icons.person_outlined;
-      case 'location_pin':
-        return Icons.location_pin;
-      case 'location_pin_outlined':
-        return Icons.location_pin;
-      default:
-        return Icons.error;
+      case 'home': return Icons.home;
+      case 'home_outlined': return Icons.home_outlined;
+      case 'restaurant': return Icons.restaurant;
+      case 'restaurant_outlined': return Icons.restaurant_outlined;
+      case 'shopping_cart': return Icons.shopping_cart;
+      case 'shopping_cart_outlined': return Icons.shopping_cart_outlined;
+      case 'person': return Icons.person;
+      case 'person_outlined': return Icons.person_outlined;
+      case 'location_pin': return Icons.location_pin;
+      case 'location_pin_outlined': return Icons.location_pin;
+      default: return Icons.error;
     }
   }
 
+  // Navigate to profile page with animation
   void _navigateToProfilePage() {
     Navigator.of(context).push(
       PageRouteBuilder(
         pageBuilder: (context, animation, secondaryAnimation) => ProfilePage(),
         transitionsBuilder: (context, animation, secondaryAnimation, child) {
-          var begin = Offset(0.8, 0.9); // Closer to origin, less dramatic
+          var begin = Offset(0.8, 0.9); // Slide from corner
           var end = Offset.zero;
-
-          // Softer, more controlled curve
           var curve = Curves.fastLinearToSlowEaseIn;
 
-          var tween =
-              Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+          var tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
 
-          // Add scale transition for extra smoothness
+          // Smooth scaling + sliding
           return ScaleTransition(
             scale: Tween<double>(begin: 0.7, end: 1.0).animate(
-              CurvedAnimation(
-                parent: animation,
-                curve: curve,
-              ),
+              CurvedAnimation(parent: animation, curve: curve),
             ),
             child: SlideTransition(
               position: animation.drive(tween),
@@ -171,7 +152,7 @@ class _HomeScreenState extends State<NavbarScreen> {
           );
         },
         transitionDuration: Duration(milliseconds: 600),
-        fullscreenDialog: true, // Removes app bar
+        fullscreenDialog: true, // No app bar
       ),
     );
   }
@@ -179,8 +160,9 @@ class _HomeScreenState extends State<NavbarScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      // App bar with user location and profile icon
       appBar: AppBar(
-        automaticallyImplyLeading: false,
+        automaticallyImplyLeading: false, // Remove back button
         title: Container(
           width: 160,
           decoration: BoxDecoration(
@@ -210,32 +192,32 @@ class _HomeScreenState extends State<NavbarScreen> {
           IconButton(
             icon: _userProfileImageUrl != null
                 ? CircleAvatar(
-                    radius: 20,
-                    backgroundImage: NetworkImage(_userProfileImageUrl!),
-                  )
+              radius: 20,
+              backgroundImage: NetworkImage(_userProfileImageUrl!),
+            )
                 : Icon(Icons.person),
             onPressed: () {},
           ),
         ],
       ),
+
+      // Display the current tab page
       body: IndexedStack(
         index: _currentIndex,
         children: _pages,
       ),
+
+      // Bottom navigation bar
       bottomNavigationBar: CircleNavBar(
         activeIndex: _currentIndex,
-        activeIcons: _activeIcons
-            .map<Icon>((icon) => Icon(
-                  _getIconData(icon),
-                  color: Colors.white,
-                ))
-            .toList(),
-        inactiveIcons: _inactiveIcons
-            .map<Icon>((icon) => Icon(
-                  _getIconData(icon),
-                  color: Colors.grey,
-                ))
-            .toList(),
+        activeIcons: _activeIcons.map<Icon>((icon) => Icon(
+          _getIconData(icon),
+          color: Colors.white,
+        )).toList(),
+        inactiveIcons: _inactiveIcons.map<Icon>((icon) => Icon(
+          _getIconData(icon),
+          color: Colors.grey,
+        )).toList(),
         color: Colors.white,
         circleColor: Colors.blue,
         padding: EdgeInsets.all(16),
@@ -245,12 +227,12 @@ class _HomeScreenState extends State<NavbarScreen> {
         ),
         onTap: (index) {
           if (index == 3) {
-            // Custom navigation for ProfilePage
+            // Profile page with custom transition
             _navigateToProfilePage();
             return;
           }
 
-          // Ensure index is within bounds
+          // Change tab
           if (index < _pages.length) {
             setState(() => _currentIndex = index);
           }
@@ -260,6 +242,7 @@ class _HomeScreenState extends State<NavbarScreen> {
   }
 }
 
+// Simple button used in categories (icon + label)
 class CategoryButton extends StatelessWidget {
   final IconData icon;
   final String label;
@@ -285,6 +268,7 @@ class CategoryButton extends StatelessWidget {
   }
 }
 
+// Card widget for showing deals or offers
 class DealCard extends StatelessWidget {
   final String title;
   final int pieces;
@@ -318,12 +302,15 @@ class DealCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            // Top row with tag and prices
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
+                // Product info
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    // Tag (e.g., "Best Deal")
                     Container(
                       padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                       decoration: BoxDecoration(
@@ -341,6 +328,7 @@ class DealCard extends StatelessWidget {
                     Text(title, style: TextStyle(fontSize: 14)),
                   ],
                 ),
+                // Prices info
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
@@ -360,7 +348,10 @@ class DealCard extends StatelessWidget {
                 ),
               ],
             ),
+
             SizedBox(height: 16),
+
+            // Availability row
             Row(
               children: [
                 Icon(Icons.access_time, size: 16),
@@ -368,7 +359,10 @@ class DealCard extends StatelessWidget {
                 Text('Available until 24, day 9:00'),
               ],
             ),
+
             SizedBox(height: 8),
+
+            // Pieces and time row
             Row(
               children: [
                 Icon(Icons.shopping_bag, size: 16),

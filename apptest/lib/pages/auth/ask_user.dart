@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:lottie/lottie.dart';
-import 'package:google_fonts/google_fonts.dart';
+import 'package:lottie/lottie.dart'; // For showing Lottie animations
+import 'package:google_fonts/google_fonts.dart'; // For custom fonts
 
-import 'package:apptest/pages/auth/client/client_login.dart';
+import 'package:apptest/pages/auth/client/client_login.dart'; // Importing ClientLoginPage
 
 class AskUserPage extends StatelessWidget {
   const AskUserPage({Key? key}) : super(key: key);
@@ -13,6 +13,7 @@ class AskUserPage extends StatelessWidget {
       body: SafeArea(
         child: Container(
           decoration: BoxDecoration(
+            // Adding gradient background
             gradient: LinearGradient(
               begin: Alignment.topCenter,
               end: Alignment.bottomCenter,
@@ -23,17 +24,17 @@ class AskUserPage extends StatelessWidget {
             ),
           ),
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.center, // Centering children vertically
             children: [
-              // Lottie Animation
+              // Display Lottie animation
               Lottie.asset(
-                'assets/splash.json',
+                'assets/splash.json', // Animation path
                 width: 250,
                 height: 250,
                 fit: BoxFit.contain,
               ),
 
-              const SizedBox(height: 30),
+              const SizedBox(height: 30), // Space between animation and title
 
               // Title
               Text(
@@ -45,7 +46,7 @@ class AskUserPage extends StatelessWidget {
                 ),
               ),
 
-              const SizedBox(height: 20),
+              const SizedBox(height: 20), // Space between title and subtitle
 
               // Subtitle
               Text(
@@ -56,19 +57,20 @@ class AskUserPage extends StatelessWidget {
                 ),
               ),
 
-              const SizedBox(height: 40),
+              const SizedBox(height: 40), // Space between subtitle and buttons
 
-              // Authentication Buttons
+              // Authentication buttons for different roles
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 30),
                 child: Column(
                   children: [
                     _buildRoleButton(
                       context,
-                      'Owner',
+                      'Owner', // Button for "Owner"
                       Icons.business_center_rounded,
                       Colors.deepPurple.shade400,
-                      () {
+                          () {
+                        // Snack bar for "Owner"
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(
                             content: Text('🚀 Coming Soon! 🎉'),
@@ -77,34 +79,38 @@ class AskUserPage extends StatelessWidget {
                         );
                       },
                     ),
-                    const SizedBox(height: 20),
+                    const SizedBox(height: 20), // Space between buttons
+
                     _buildRoleButton(
                       context,
-                      'Restaurant',
+                      'Restaurant', // Button for "Restaurant"
                       Icons.restaurant_rounded,
                       Colors.green.shade400,
-                      () {
+                          () {
+                        // Snack bar for "Restaurant"
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(
                             content: Text('🚀 Coming Soon! 🎉'),
                             duration: Duration(seconds: 2),
                           ),
                         );
-                        // Navigate to restaurant login
+                        // Optionally navigate to Restaurant Login page
                       },
                     ),
-                    const SizedBox(height: 20),
+                    const SizedBox(height: 20), // Space between buttons
+
                     _buildRoleButton(
                       context,
-                      'Client',
+                      'Client', // Button for "Client"
                       Icons.person_rounded,
                       Colors.blue.shade400,
-                      () {
-                        // Navigate to client login
+                          () {
+                        // Navigate to Client Login page
                         Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => const ClientLoginPage()));
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => const ClientLoginPage()),
+                        );
                       },
                     ),
                   ],
@@ -117,31 +123,32 @@ class AskUserPage extends StatelessWidget {
     );
   }
 
+  // Helper method to build each role button
   Widget _buildRoleButton(
-    BuildContext context,
-    String role,
-    IconData icon,
-    Color color,
-    VoidCallback onPressed,
-  ) {
+      BuildContext context,
+      String role, // Role name for button text
+      IconData icon, // Icon for the button
+      Color color, // Color for the button
+      VoidCallback onPressed, // Callback for button press action
+      ) {
     return ElevatedButton(
-      onPressed: onPressed,
+      onPressed: onPressed, // Action when button is pressed
       style: ElevatedButton.styleFrom(
-        backgroundColor: color,
-        foregroundColor: Colors.white,
-        padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 20),
+        backgroundColor: color, // Button color
+        foregroundColor: Colors.white, // Text color
+        padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 20), // Padding
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(15),
+          borderRadius: BorderRadius.circular(15), // Rounded corners
         ),
-        elevation: 5,
+        elevation: 5, // Shadow for button
       ),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.center, // Center content in row
         children: [
-          Icon(icon, size: 24),
-          const SizedBox(width: 10),
+          Icon(icon, size: 24), // Display icon
+          const SizedBox(width: 10), // Space between icon and text
           Text(
-            'Continue as $role',
+            'Continue as $role', // Button text: e.g., "Continue as Owner"
             style: GoogleFonts.poppins(
               fontSize: 18,
               fontWeight: FontWeight.w600,

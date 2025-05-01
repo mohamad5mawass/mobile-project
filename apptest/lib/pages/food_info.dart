@@ -55,7 +55,7 @@ class _FoodInfoPageState extends State<FoodInfoPage> {
 
       print('Attempting to fetch restaurant document');
       final QuerySnapshot restaurantQuery =
-          await _firestore.collection('restaurants').get();
+      await _firestore.collection('restaurants').get();
 
       print('Total restaurants found: ${restaurantQuery.docs.length}');
       restaurantQuery.docs.forEach((doc) {
@@ -240,7 +240,7 @@ class _FoodInfoPageState extends State<FoodInfoPage> {
 
       // Update owner's profit using current user's UID
       DocumentReference ownerRef =
-          _firestore.collection('owners').doc("eY3B3EvHvxa1BcKLwEZ79BPDQVG2");
+      _firestore.collection('owners').doc("eY3B3EvHvxa1BcKLwEZ79BPDQVG2");
 
       await _firestore.runTransaction((transaction) async {
         DocumentSnapshot ownerSnapshot = await transaction.get(ownerRef);
@@ -309,40 +309,40 @@ class _FoodInfoPageState extends State<FoodInfoPage> {
   Widget _buildMaterialsSelector() {
     return _selectedMaterials.isNotEmpty
         ? Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                'Materials:',
-                style: TextStyle(fontWeight: FontWeight.bold),
-              ),
-              Wrap(
-                spacing: 8.0,
-                children: _selectedMaterials.map((material) {
-                  return Chip(
-                    label: Text(material),
-                  );
-                }).toList(),
-              ),
-            ],
-          )
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'Materials:',
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
+        Wrap(
+          spacing: 8.0,
+          children: _selectedMaterials.map((material) {
+            return Chip(
+              label: Text(material),
+            );
+          }).toList(),
+        ),
+      ],
+    )
         : SizedBox.shrink();
   }
 
   Widget _buildInstructionsSection() {
     return _instructions != null && _instructions!.isNotEmpty
         ? Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                'Instructions:',
-                style: TextStyle(fontWeight: FontWeight.bold),
-              ),
-              Text(
-                _instructions!,
-                style: TextStyle(color: Colors.grey[700]),
-              ),
-            ],
-          )
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'Instructions:',
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
+        Text(
+          _instructions!,
+          style: TextStyle(color: Colors.grey[700]),
+        ),
+      ],
+    )
         : SizedBox.shrink();
   }
 
@@ -412,7 +412,7 @@ class _FoodInfoPageState extends State<FoodInfoPage> {
                         SizedBox(height: 10),
                         Container(
                           padding:
-                              EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                          EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                           decoration: BoxDecoration(
                             color: Colors.white.withOpacity(0.3),
                             borderRadius: BorderRadius.circular(20),
@@ -627,26 +627,26 @@ class _FoodInfoPageState extends State<FoodInfoPage> {
                     height: 50,
                     child: _isOrdered && _whatsappNumber != null
                         ? ElevatedButton.icon(
-                            onPressed: _launchWhatsApp,
-                            icon: Icon(Icons.phone),
-                            label: Text('Contact Restaurant'),
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Color(0xFFD75A88),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(25),
-                              ),
-                            ),
-                          )
+                      onPressed: _launchWhatsApp,
+                      icon: Icon(Icons.phone),
+                      label: Text('Contact Restaurant'),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Color(0xFFD75A88),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(25),
+                        ),
+                      ),
+                    )
                         : ElevatedButton(
-                            onPressed: _placeOrder,
-                            child: Text('Order Now'),
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Color(0xFFD75A88),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(25),
-                              ),
-                            ),
-                          ),
+                      onPressed: _placeOrder,
+                      child: Text('Order Now'),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Color(0xFFD75A88),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(25),
+                        ),
+                      ),
+                    ),
                   ),
                 ],
               ),

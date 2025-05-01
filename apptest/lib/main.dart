@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:firebase_core/firebase_core.dart';
-import 'package:apptest/pages/splash_screen.dart';
+import 'package:firebase_core/firebase_core.dart'; // For initializing Firebase
+import 'package:apptest/pages/splash_screen.dart'; // Importing SplashScreen
 
 void main() async {
-  // Ensure Flutter binding is initialized before Firebase
+  // Ensure widget binding is initialized before using Firebase
   WidgetsFlutterBinding.ensureInitialized();
 
   try {
-    // Initialize Firebase with specific configuration
+    // Initialize Firebase with custom configuration
     await Firebase.initializeApp(
-      options: FirebaseOptions(
+      options: const FirebaseOptions(
         apiKey: "AIzaSyAjJO0DkylQJa72ex4YDQ4wiIeO1kw6AA8",
         projectId: "apptestshop-d75aa",
         messagingSenderId: "223469946880",
@@ -18,15 +18,20 @@ void main() async {
       ),
     );
 
-    // Run the app
+    // Run the app if Firebase initialized successfully
     runApp(const MyApp());
   } catch (e) {
-    // Handle Firebase initialization error
+    // If Firebase initialization fails, show a simple error screen
     runApp(
       MaterialApp(
+        debugShowCheckedModeBanner: false,
         home: Scaffold(
           body: Center(
-            child: Text('an error has occured with your firebase'),
+            child: Text(
+              'An error has occurred with your Firebase setup.',
+              style: TextStyle(fontSize: 18, color: Colors.red),
+              textAlign: TextAlign.center,
+            ),
           ),
         ),
       ),
@@ -34,19 +39,20 @@ void main() async {
   }
 }
 
+// Main App Widget
 class MyApp extends StatelessWidget {
   const MyApp({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      debugShowCheckedModeBanner: false,
+      debugShowCheckedModeBanner: false, // Hide debug banner
       title: 'Food App',
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-        useMaterial3: true,
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple), // App color theme
+        useMaterial3: true, // Enable Material 3 design
       ),
-      home: const SplashScreen(),
+      home: const SplashScreen(), // Starting page (Splash Screen)
     );
   }
 }
