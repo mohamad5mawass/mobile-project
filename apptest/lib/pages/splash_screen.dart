@@ -1,4 +1,4 @@
-git commit -m "Describe your change here"import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart'; // For showing Lottie animations
 import 'package:apptest/pages/auth/ask_user.dart'; // Page to navigate after splash
 
