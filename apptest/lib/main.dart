@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart'; // For initializing Firebase
 import 'package:apptest/pages/splash_screen.dart'; // Importing SplashScreen
-
 void main() async {
   // Ensure widget binding is initialized before using Firebase
   WidgetsFlutterBinding.ensureInitialized();
-
   try {
     // Initialize Firebase with custom configuration
     await Firebase.initializeApp(
@@ -17,7 +15,6 @@ void main() async {
         storageBucket: "apptestshop-d75aa.firebasestorage.app",
       ),
     );
-
     // Run the app if Firebase initialized successfully
     runApp(const MyApp());
   } catch (e) {
@@ -38,11 +35,9 @@ void main() async {
     );
   }
 }
-
 // Main App Widget
 class MyApp extends StatelessWidget {
   const MyApp({Key? key}) : super(key: key);
-
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
