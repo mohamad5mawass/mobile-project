@@ -34,7 +34,7 @@ class AskUserPage extends StatelessWidget {
                 fit: BoxFit.contain,
               ),
 
-              const SizedBox(height: 30), // Space between animation and title
+              const SizedBox(height: 40), // Space between animation and title
 
               // Title
               Text(
