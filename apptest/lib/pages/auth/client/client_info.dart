@@ -68,7 +68,7 @@ class _ClientInfoPageState extends State<ClientInfoPage> {
 
             // Update location controller with location details
             _locationController.text =
-                '$_locationName\nLat: $_latitude, Lon: $_longitude';
+            '$_locationName\nLat: $_latitude, Lon: $_longitude';
           });
         }
       }
@@ -259,10 +259,10 @@ class _ClientInfoPageState extends State<ClientInfoPage> {
                           : null,
                       child: _profileImageUrl == null
                           ? Icon(
-                              Icons.camera_alt,
-                              size: 50,
-                              color: Colors.grey[800],
-                            )
+                        Icons.camera_alt,
+                        size: 50,
+                        color: Colors.grey[800],
+                      )
                           : null,
                     ),
                   ),
@@ -457,7 +457,7 @@ class _LocationPickerPageState extends State<LocationPickerPage> {
       });
       // Geocode the entered location
       List<Location> locations =
-          await locationFromAddress(_searchController.text);
+      await locationFromAddress(_searchController.text);
       if (locations.isNotEmpty) {
         Location location = locations.first;
         // Update selected location
@@ -478,7 +478,7 @@ class _LocationPickerPageState extends State<LocationPickerPage> {
         // Zoom and center map on the location
         _mapController.move(LatLng(location.latitude, location.longitude),
             12.0 // Closer zoom level
-            );
+        );
         // Clear suggestions
         _searchSuggestions.clear();
       }
@@ -505,7 +505,7 @@ class _LocationPickerPageState extends State<LocationPickerPage> {
     // Zoom and center map
     _mapController.move(LatLng(suggestion['latitude'], suggestion['longitude']),
         12.0 // Closer zoom level
-        );
+    );
   }
   String _formatPlacemark(Placemark placemark) {
     return '${placemark.street}, ${placemark.locality}, ${placemark.country}';

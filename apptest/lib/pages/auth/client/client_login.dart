@@ -5,41 +5,33 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lottie/lottie.dart';
-
 class ClientLoginPage extends StatefulWidget {
   const ClientLoginPage({Key? key}) : super(key: key);
-
   @override
   _ClientLoginPageState createState() => _ClientLoginPageState();
 }
-
 class _ClientLoginPageState extends State<ClientLoginPage> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-
   bool _isLoading = false;
   bool _obscurePassword = true;
-
   Future<void> _loginClient() async {
     setState(() {
       _isLoading = true;
     });
-
     try {
       // First, authenticate with Firebase Authentication
       UserCredential userCredential = await _auth.signInWithEmailAndPassword(
         email: _emailController.text.trim(),
         password: _passwordController.text.trim(),
       );
-
       // Check if the user exists in the owners collection
       DocumentSnapshot clientDoc = await _firestore
           .collection('users')
           .doc(userCredential.user!.uid)
           .get();
-
       if (clientDoc.exists) {
         // Successful owner login
         _showSuccessDialog();
@@ -70,7 +62,6 @@ class _ClientLoginPageState extends State<ClientLoginPage> {
       });
     }
   }
-
   void _showSuccessDialog() {
     showDialog(
       context: context,
@@ -168,7 +159,6 @@ class _ClientLoginPageState extends State<ClientLoginPage> {
                             color: Colors.blue.shade800,
                           ),
                         ),
-
                         const SizedBox(height: 30),
                         TextField(
                           controller: _emailController,
@@ -183,7 +173,6 @@ class _ClientLoginPageState extends State<ClientLoginPage> {
                           keyboardType: TextInputType.emailAddress,
                         ),
                         const SizedBox(height: 20),
-
                         // Password TextField
                         TextField(
                           controller: _passwordController,
@@ -212,7 +201,6 @@ class _ClientLoginPageState extends State<ClientLoginPage> {
                         ),
 
                         const SizedBox(height: 30),
-
                         // Login Button
                         ElevatedButton(
                           onPressed: _isLoading ? null : _loginClient,

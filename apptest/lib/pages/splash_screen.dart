@@ -1,32 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart'; // For showing Lottie animations
 import 'package:apptest/pages/auth/ask_user.dart'; // Page to navigate after splash
-
 // This is the Splash Screen widget
 class SplashScreen extends StatefulWidget {
   const SplashScreen({Key? key}) : super(key: key);
-
   @override
   _SplashScreenState createState() => _SplashScreenState();
 }
-
 // State class for SplashScreen
 class _SplashScreenState extends State<SplashScreen>
     with SingleTickerProviderStateMixin {
-
   // Controller to manage w tzabet  the animation
   late AnimationController _controller;
-
   @override
   void initState() {
     super.initState();
-
     // Initialize animation controller to run for 3 seconds
     _controller = AnimationController(
       vsync: this,
       duration: const Duration(seconds: 3),
     );
-
     // When the animation finishes, navigate to AskUserPage
     _controller.addStatusListener((status) {
       if (status == AnimationStatus.completed) {
@@ -35,18 +28,15 @@ class _SplashScreenState extends State<SplashScreen>
         );
       }
     });
-
     // Start running the animation
     _controller.forward();
   }
-
   @override
   void dispose() {
     // Dispose the controller when screen is removed
     _controller.dispose();
     super.dispose();
   }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
